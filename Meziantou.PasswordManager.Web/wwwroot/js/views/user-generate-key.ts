@@ -2,7 +2,7 @@
 import { required, dataType, DataType, lookupValues, editable } from "../data-annotations";
 import { Router } from '../router';
 import * as crypto from '../crypto';
-import { IValidationRule, validationRule, CompareOtherPropertyValidationRule } from '../validation/validation';
+import { IValidationRule, validationRule, CompareOtherPropertyValidationRule } from '../validation';
 import { isNumber } from '../utilities';
 import { UserService } from '../models/services';
 import { InitializeResult } from '../ui/view-component';

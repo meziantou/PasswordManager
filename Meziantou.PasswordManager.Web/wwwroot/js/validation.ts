@@ -1,5 +1,5 @@
 ﻿import "reflect-metadata";
-import { getPropertyAnnotations, DataType, getObjectAnnotations } from "../data-annotations";
+import { getPropertyAnnotations, DataType, getObjectAnnotations } from "./data-annotations";
 
 export interface IValidationRule {
     evaluate(target: any, value: any, key: string): string | null;

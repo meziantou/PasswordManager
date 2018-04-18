@@ -1,7 +1,7 @@
 ﻿import { ViewComponent, InitializeResult } from "./view-component";
 import { getObjectAnnotations, getPropertyAnnotations, DataType, PropertyDataAnnotations } from "../data-annotations";
 import { isNullOrUndefined, isString, parseNumber, parseString, isUndefined, isArray, isObject } from "../utilities";
-import { validateProperty, validate } from "../validation/validation";
+import { validateProperty, validate } from "../validation";
 import * as jsx from "./jsx";
 import { removeChildren } from "../dom-utilities";
 import { appendChild } from "./jsx";

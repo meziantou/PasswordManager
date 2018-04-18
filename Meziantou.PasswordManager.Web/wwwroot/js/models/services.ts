@@ -1,5 +1,4 @@
 ﻿import { isNullOrUndefined, isNumber, parseInteger, isString } from "../utilities";
-import { StorageCache, LocalCache } from "../caching/memory-cache";
 import { required, dataType, DataType } from '../data-annotations';
 import { usingMasterKey } from '../views/master-key';
 import * as crypto from "../crypto";
