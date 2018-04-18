@@ -259,3 +259,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Specific
+Meziantou\.PasswordManager\.Web/db/
+Meziantou\.PasswordManager\.Web/wwwroot/js/**/*.js
+Meziantou\.PasswordManager\.Web/wwwroot/js/**/*.js.map

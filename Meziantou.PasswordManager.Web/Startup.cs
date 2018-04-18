@@ -7,6 +7,7 @@ using Meziantou.PasswordManager.Web.Areas.Api.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -27,12 +28,11 @@ namespace Meziantou.PasswordManager.Web
             services.AddMvc()
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<UserRepository>();
             services.AddSingleton<DocumentRepository>();
             services.AddSingleton<CurrentUserProvider>();
-
-
 
             services.AddSingleton(serviceProvider =>
             {

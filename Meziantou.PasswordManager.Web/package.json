@@ -1,0 +1,9 @@
+{
+  "name": "meziantou.passwordmanager",
+  "version": "0.0.0",
+  "author": "Meziantou",
+  "devDependencies": {
+    "reflect-metadata": "0.1.12",
+    "tslib": "1.9.0"
+  }
+}

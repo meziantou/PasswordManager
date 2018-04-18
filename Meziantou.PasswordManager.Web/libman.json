@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "reflect-metadata@0.1.12",
+      "destination": "wwwroot/lib"
+    },
+    {
+      "library": "tslib@1.9.0",
+      "destination": "wwwroot/lib",
+      "files": [
+        "tslib.js",
+        "tslib.min.js",
+        "tslib.min.js.map"
+      ]
+    },
+    {
+      "library": "systemjs@0.21.3",
+      "destination": "wwwroot/lib/",
+      "files": [
+        "system.js",
+        "system.js.map"
+      ]
+    }
+  ]
+}
