@@ -1,0 +1,12 @@
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Authors>Meziantou</Authors>
+    <Company>Meziantou</Company>
+  </PropertyGroup>
+
+</Project>

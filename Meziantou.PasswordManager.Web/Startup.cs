@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Meziantou.PasswordManager
+namespace Meziantou.PasswordManager.Web
 {
     public class Startup
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc()
+                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -22,10 +19,11 @@ namespace Meziantou.PasswordManager
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Run(async (context) =>
-            {
-                await context.Response.WriteAsync("Hello World!");
-            });
+            app.UseHsts();
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseMvc();
         }
     }
 }
