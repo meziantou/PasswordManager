@@ -10,6 +10,7 @@ using Meziantou.PasswordManager.Web.Areas.Api.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 
 namespace Meziantou.PasswordManager.Web.Areas.Api.Controllers
@@ -20,10 +21,10 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Controllers
     {
         private readonly UserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly JwtAuthentication _jwtAuthentication;
+        private readonly IOptions<JwtAuthentication> _jwtAuthentication;
         private readonly CurrentUserProvider _currentUserProvider;
 
-        public UserController(UserRepository userRepository, IPasswordHasher passwordHasher, JwtAuthentication jwtAuthentication, CurrentUserProvider currentUserProvider)
+        public UserController(UserRepository userRepository, IPasswordHasher passwordHasher, IOptions<JwtAuthentication> jwtAuthentication, CurrentUserProvider currentUserProvider)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
@@ -83,13 +84,14 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
+            var jwtAuthentication = _jwtAuthentication.Value;
             var token = new JwtSecurityToken(
-                issuer: _jwtAuthentication.ValidIssuer,
-                audience: _jwtAuthentication.ValidAudience,
+                issuer: jwtAuthentication.ValidIssuer,
+                audience: jwtAuthentication.ValidAudience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddDays(30),
                 notBefore: DateTime.UtcNow,
-                signingCredentials: _jwtAuthentication.SigningCredentials);
+                signingCredentials: jwtAuthentication.SigningCredentials);
 
             return Ok(new
             {

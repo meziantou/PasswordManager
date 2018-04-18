@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Meziantou.PasswordManager.Web
@@ -42,28 +43,10 @@ namespace Meziantou.PasswordManager.Web
                 return db;
             });
 
-            var jwtAuthentication = new JwtAuthentication();
-            Configuration.GetSection("JwtAuthentication").Bind(jwtAuthentication);
-            services.AddSingleton(jwtAuthentication);
+            services.Configure<JwtAuthentication>(Configuration.GetSection("JwtAuthentication"));
+            services.AddSingleton<IPostConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.ClaimsIssuer = jwtAuthentication.ValidIssuer;
-                    options.IncludeErrorDetails = true;
-                    options.RequireHttpsMetadata = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateActor = true,
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtAuthentication.ValidIssuer,
-                        ValidAudience = jwtAuthentication.ValidAudience,
-                        IssuerSigningKey = jwtAuthentication.SymmetricSecurityKey,
-                        NameClaimType = ClaimTypes.NameIdentifier
-                    };
-                });
+                .AddJwtBearer();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -85,6 +68,37 @@ namespace Meziantou.PasswordManager.Web
                   template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
                 );
             });
+        }
+
+        private class ConfigureJwtBearerOptions : IPostConfigureOptions<JwtBearerOptions>
+        {
+            private readonly IOptions<JwtAuthentication> _jwtAuthentication;
+
+            public ConfigureJwtBearerOptions(IOptions<JwtAuthentication> jwtAuthentication)
+            {
+                _jwtAuthentication = jwtAuthentication ?? throw new System.ArgumentNullException(nameof(jwtAuthentication));
+            }
+
+            public void PostConfigure(string name, JwtBearerOptions options)
+            {
+                var jwtAuthentication = _jwtAuthentication.Value;
+
+                options.ClaimsIssuer = jwtAuthentication.ValidIssuer;
+                options.IncludeErrorDetails = true;
+                options.RequireHttpsMetadata = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateActor = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtAuthentication.ValidIssuer,
+                    ValidAudience = jwtAuthentication.ValidAudience,
+                    IssuerSigningKey = jwtAuthentication.SymmetricSecurityKey,
+                    NameClaimType = ClaimTypes.NameIdentifier
+                };
+            }
         }
     }
 }
