@@ -16,7 +16,7 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Data
         public Task<User> LoadByEmailAsync(string email, CancellationToken ct = default)
         {
             if (string.IsNullOrEmpty(email))
-                return null;
+                return Task.FromResult<User>(null);
 
             using (var tx = _database.BeginReadTransaction())
             {
