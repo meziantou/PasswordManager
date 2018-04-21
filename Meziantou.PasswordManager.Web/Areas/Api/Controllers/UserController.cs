@@ -79,9 +79,8 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Controllers
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, model.Email),
                 new Claim(JwtRegisteredClaimNames.Sub, model.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
             var jwtAuthentication = _jwtAuthentication.Value;
