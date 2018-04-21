@@ -65,7 +65,7 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Controllers
 
             if (document.SharedWith != null)
             {
-                doc.SharedWith = new List<User>();
+                doc.SharedWith = new List<UserRef>();
                 foreach (var email in document.SharedWith)
                 {
                     var u = await _userRepository.LoadByEmailAsync(email);

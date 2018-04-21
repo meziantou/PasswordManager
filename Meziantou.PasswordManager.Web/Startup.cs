@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using Meziantou.PasswordManager.Web.Areas.Api;
 using Meziantou.PasswordManager.Web.Areas.Api.Configuration;
 using Meziantou.PasswordManager.Web.Areas.Api.Data;
@@ -96,7 +96,8 @@ namespace Meziantou.PasswordManager.Web
                     ValidIssuer = jwtAuthentication.ValidIssuer,
                     ValidAudience = jwtAuthentication.ValidAudience,
                     IssuerSigningKey = jwtAuthentication.SymmetricSecurityKey,
-                    NameClaimType = ClaimTypes.NameIdentifier
+                    NameClaimType = JwtRegisteredClaimNames.Sub,
+                    RequireSignedTokens = true
                 };
             }
         }

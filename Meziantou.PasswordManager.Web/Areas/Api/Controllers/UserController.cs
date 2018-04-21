@@ -36,6 +36,9 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Controllers
         public async Task<IActionResult> Me()
         {
             var user = await _currentUserProvider.GetUserAsync(HttpContext.RequestAborted);
+            if (user == null)
+                return Unauthorized();
+
             return Ok(user);
         }
 

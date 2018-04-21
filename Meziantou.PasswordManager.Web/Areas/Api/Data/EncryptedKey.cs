@@ -2,7 +2,7 @@
 {
     public class EncryptedKey
     {
-        public User User { get; set; }
+        public UserRef User { get; set; }
         public byte[] Key { get; set; }
     }
 }

@@ -6,7 +6,7 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Data
 {
     public class Document : IKeyable<IntId>, ITrackableEntity
     {
-        public User User { get; set; }
+        public UserRef User { get; set; }
 
         [Key]
         public IntId Id { get; set; }
@@ -16,7 +16,7 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Data
         public DateTime LastUpdatedOn { get; set; }
 
         public IList<Field> Fields { get; set; }
-        public IList<User> SharedWith { get; set; }
+        public IList<UserRef> SharedWith { get; set; }
 
         public bool IsOwnedBy(User user)
         {
