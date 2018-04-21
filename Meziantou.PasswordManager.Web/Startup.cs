@@ -58,6 +58,7 @@ namespace Meziantou.PasswordManager.Web
             }
 
             app.UseHsts();
+            app.UseMiddleware<SecurityHeadersMiddleware>();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
