@@ -8,8 +8,43 @@ import { usingMasterKey } from './master-key';
 import * as crypto from '../crypto';
 import { Document, Field, FieldType } from '../models/model';
 
+class DocumentView {
+    public fields: FieldView[];
+
+    constructor(private document: Document) {
+        this.fields = document.fields.map(f => new FieldView(f));
+    }
+
+    public get id() {
+        return this.document.id;
+    }
+
+    public get displayName() {
+        return this.document.displayName;
+    }
+}
+
+class FieldView {
+    public showEncryptedValue: boolean = false;
+
+    constructor(public field: Field) {
+    }
+
+    public get displayName() {
+        return this.field.name;
+    }
+
+    public get displayValue() {
+        return getDisplayValue(this.field);
+    }
+
+    public get isEncrypted() {
+        return isEncrypted(this.field);
+    }
+}
+
 export class DocumentList extends ViewComponent {
-    private documents: Document[] = [];
+    private documents: DocumentView[] = [];
 
     constructor(private userService: UserService, private documentService: DocumentService, private router: Router) {
         super();
@@ -27,7 +62,8 @@ export class DocumentList extends ViewComponent {
             return InitializeResult.StopProcessing;
         }
 
-        this.documents = await this.documentService.get();
+        const documents = await this.documentService.get();
+        this.documents = documents.map(d => new DocumentView(d));
         return InitializeResult.Ok;
     }
 
@@ -83,11 +119,12 @@ export class DocumentList extends ViewComponent {
 
         appendChild(dialog,
             <div>
-                <h1>{getDisplayName(doc)}</h1>
+                <h1>{doc.displayName}</h1>
                 {doc.fields && doc.fields.map(field =>
                     <div>
-                        <span>{field.name}</span>
-                        <input type="text" readonly value={getDisplayValue(field)} />
+                        <span>{field.displayName}</span>
+                        <input type="text" readonly value={field.displayValue} />
+                        {field.isEncrypted && <button type="button" onclick={this.showValue(field)}>Show</button>}
                         <button type="button" onclick={this.copyToClipboard(field)}>Copy</button>
                     </div>)}
             </div>);
@@ -96,17 +133,43 @@ export class DocumentList extends ViewComponent {
         dialog.showModal();
     }
 
-    private copyToClipboard(field: Field) {
+    private copyToClipboard(field: FieldView) {
         const handler = async (e: MouseEvent) => {
             e.preventDefault();
 
-            const value = await getFieldValue(field, this.userService);
+            const value = await getFieldValue(field.field, this.userService);
 
             // https://developers.google.com/web/updates/2018/03/clipboardapi
             (navigator as any).clipboard.writeText(value)
                 .catch(err => {
                     console.error('Could not copy text', err);
                 });
+        };
+
+        return handler.bind(this);
+    }
+
+    private showValue(field: FieldView) {
+        const handler = async (e: MouseEvent) => {
+            e.preventDefault();
+
+            const button = e.currentTarget;
+            const input = getValueInput(e);
+            if (!input) {
+                console.error('Could not find input element for field ' + field.displayName);
+                return;
+            }
+
+            if (field.showEncryptedValue) {
+                input.value = field.displayValue;
+                field.showEncryptedValue = false;
+                setText(button, "show");
+            } else {
+                const value = await getFieldValue(field.field, this.userService);
+                input.value = value;
+                field.showEncryptedValue = true;
+                setText(button, "hide");
+            }
         };
 
         return handler.bind(this);
@@ -137,4 +200,21 @@ function getDisplayName(document: Document) {
 
 function isEncrypted(field: Field) {
     return !isString(field.value);
+}
+
+function getValueInput(e: MouseEvent) {
+    var target = e.currentTarget;
+    if (target instanceof HTMLElement) {
+        if (target.parentElement) {
+            return target.parentElement.querySelector("input");
+        }
+    }
+
+    return null;
+}
+
+function setText(obj: any, text: string) {
+    if (obj instanceof HTMLElement) {
+        obj.textContent = text;
+    }
 }

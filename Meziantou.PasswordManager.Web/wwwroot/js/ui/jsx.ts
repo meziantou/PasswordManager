@@ -46,6 +46,8 @@ export function appendChild(parent: Node, child: any) {
         parent.appendChild(document.createTextNode(child));
     } else if (child instanceof Node) {
         parent.appendChild(child);
+    } else if (isBoolean(child)) {
+        // do nothing. Handle false && <></>
     } else {
         parent.appendChild(document.createTextNode(String(child)));
     }

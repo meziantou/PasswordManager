@@ -1,12 +1,27 @@
-﻿import { dataType, DataType, required } from '../data-annotations';
+﻿import { dataType, DataType, required, autoComplete } from '../data-annotations';
 import { openModalForm } from '../ui/form-component';
-import { isNullOrEmpty, debounce } from '../utilities';
+import { isNullOrEmpty, throttle } from '../utilities';
 
 let masterKey: string | null = null;
-const setCache = debounce(30000, (key: string) => {
+let timeoutHandle: number | undefined;
+
+function setCache(key: string) {
+    console.log("Store master key in cache");
     masterKey = key;
-    clearCache();
-});
+    clearTimeout();
+    timeoutHandle = setTimeout(clearCache, 30000);
+}
+
+export function clearCache() {
+    console.log("Remove master key from cache");
+    masterKey = null;
+    clearTimeout();
+}
+
+function clearTimeout() {
+    window.clearTimeout(timeoutHandle);
+    timeoutHandle = undefined;
+}
 
 export interface GetMasterKeyOptions {
     attempt?: number;
@@ -54,10 +69,7 @@ async function getMasterKey(options: GetMasterKeyOptions): Promise<string | null
     return null;
 }
 
-export function clearCache() {
-    masterKey = null;
-}
-
+@autoComplete(false)
 class MasterKey {
     @required
     @dataType(DataType.password)

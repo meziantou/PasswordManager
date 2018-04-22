@@ -1,5 +1,5 @@
 ﻿import "reflect-metadata";
-import { getPropertyAnnotations, DataType, getObjectAnnotations } from "./data-annotations";
+import { DataType, getObjectAnnotationsFromInstance, getPropertyAnnotationsFromInstance } from "./data-annotations";
 
 export interface IValidationRule {
     evaluate(target: any, value: any, key: string): string | null;
@@ -40,7 +40,7 @@ export function validateProperty<T>(target: T, propertyKey: keyof T): string[] {
     }
 
     // Get the list of properties to validate
-    const annotations = getPropertyAnnotations(target, propertyKey);
+    const annotations = getPropertyAnnotationsFromInstance(target, propertyKey);
     if (annotations.required) {
         rules.push(RequiredValidationRule.instance);
     }
@@ -81,7 +81,7 @@ function addValidationRule(target: any, propertyKey: string, rule: IValidationRu
 
 function getProperties(target: any) {
     const keys = Reflect.getMetadata("validation", target) as string[] | undefined;
-    const annotations = getObjectAnnotations(target);
+    const annotations = getObjectAnnotationsFromInstance(target);
 
     const result = new Set<string>(annotations.properties);
     if (keys) {

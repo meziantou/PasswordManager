@@ -1,6 +1,6 @@
 ﻿import { ViewComponent, InitializeResult } from "./view-component";
-import { getObjectAnnotations, getPropertyAnnotations, DataType, PropertyDataAnnotations } from "../data-annotations";
-import { isNullOrUndefined, isString, parseNumber, parseString, isUndefined, isArray, isObject } from "../utilities";
+import { DataType, PropertyDataAnnotations, getObjectAnnotationsFromInstance, getPropertyAnnotationsFromInstance } from "../data-annotations";
+import { isNullOrUndefined, isString, parseNumber, parseString, isUndefined, isArray, isObject, isBoolean } from "../utilities";
 import { validateProperty, validate } from "../validation";
 import * as jsx from "./jsx";
 import { removeChildren } from "../dom-utilities";
@@ -68,10 +68,12 @@ export abstract class FormComponent<T> extends ViewComponent {
             form.method = this.options.formMethod;
         }
 
-        const annotations = getObjectAnnotations(this.model);
-        for (const propertyKey of annotations.properties) {
-            const propertyAnnotations = getPropertyAnnotations(this.model, propertyKey);
+        const annotations = getObjectAnnotationsFromInstance(this.model);
+        if (isBoolean(annotations.autoComplete)) {
+            form.autocomplete = annotations.autoComplete ? "on" : "off";
+        }
 
+        for (const propertyKey of annotations.properties) {
             const editor = this.createEditor(form, this.model, propertyKey);
             await editor.render();
             this.editors.push(editor);
@@ -191,7 +193,7 @@ export class Editor implements IEditor {
         private readonly model: any,
         public readonly propertyKey: string) {
         this.editorId = `id-${this.propertyKey}-${++Editor.counter}`;
-        this.propertyAnnotations = getPropertyAnnotations(model, propertyKey);
+        this.propertyAnnotations = getPropertyAnnotationsFromInstance(model, propertyKey);
         if (isNullOrUndefined(model)) {
             this.model = {};
         }
@@ -241,6 +243,9 @@ export class Editor implements IEditor {
         } else {
             const input = document.createElement("input");
             input.id = this.editorId;
+            if (isBoolean(this.propertyAnnotations.autoComplete)) {
+                input.autocomplete = this.propertyAnnotations.autoComplete ? "on" : "off";
+            }
 
             let valuePropertyName: keyof HTMLInputElement;
             switch (this.propertyAnnotations.dataType) {
@@ -408,9 +413,9 @@ export class ArrayEditor implements IEditor {
         const li = document.createElement("li");
         this.elements.itemsParent.appendChild(li);
 
-        const annotations = getObjectAnnotations(item);
+        const annotations = getObjectAnnotationsFromInstance(item);
         for (const propertyKey of annotations.properties) {
-            const propertyAnnotations = getPropertyAnnotations(item, propertyKey);
+            const propertyAnnotations = getPropertyAnnotationsFromInstance(item, propertyKey);
 
             const editor = this.formComponent.createEditor(li, item, propertyKey);
             await editor.render();
