@@ -10,8 +10,8 @@ async function bootstrap() {
         throw new Error("Root element not found");
     }
 
-    const viewSwitcher = new ViewSwitcher(viewRootElement);
     const router = new Router();
+    const viewSwitcher = new ViewSwitcher(viewRootElement, router);    
     const httpClient = new HttpClient();
     const userService = new UserService(httpClient);
     const documentService = new DocumentService(httpClient);

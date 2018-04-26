@@ -3,7 +3,8 @@
 export abstract class ViewComponent {
     protected parentNode: Node | null = null;
 
-    public initialize(): Promise<void> | void | InitializeResult | Promise<InitializeResult> {
+    public initialize(): InitializeResult | Promise<InitializeResult> | RedirectResult | Promise<RedirectResult> {
+        return InitializeResult.Ok;
     }
 
     public render(parentNode: Node): Promise<void> {
@@ -24,4 +25,9 @@ export abstract class ViewComponent {
 export const enum InitializeResult {
     Ok,
     StopProcessing
+}
+
+export class RedirectResult {
+    constructor(public readonly url: string) {
+    }
 }

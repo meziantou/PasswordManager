@@ -1,12 +1,13 @@
 ﻿import { removeChildren } from "../dom-utilities";
-import { ViewComponent, InitializeResult } from "./view-component";
+import { ViewComponent, InitializeResult, RedirectResult } from "./view-component";
 import { isNumber } from '../utilities';
+import { Router } from '../router';
 
 export class ViewSwitcher {
     private currentView: ViewComponent | null = null;
     private currentViewPromise: (() => Promise<ViewComponent>) | null = null;
 
-    constructor(private rootNode: Node) {
+    constructor(private rootNode: Node, private router: Router) {
     }
 
     public async setView(viewComponentPromise: () => Promise<ViewComponent>) {
@@ -32,6 +33,10 @@ export class ViewSwitcher {
                 viewComponent.destroy();
                 return;
             }
+        } else if (result instanceof RedirectResult) {
+            this.router.setUrl(result.url);
+            viewComponent.destroy();
+            return;
         }
 
         // Ensure this is the last loading view

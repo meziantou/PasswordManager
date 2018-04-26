@@ -11,8 +11,9 @@ export class LoginView extends FormComponent<LoginModel> {
     }
 
     public async initialize(options?: InitializeOptions) {
-        if (await userMustBeAnonymous(this.userService, this.router) === InitializeResult.StopProcessing) {
-            return InitializeResult.StopProcessing;
+        const result = await userMustBeAnonymous(this.userService, this.router);
+        if (result !== InitializeResult.Ok) {
+            return result;
         }
 
         return super.initialize(options);

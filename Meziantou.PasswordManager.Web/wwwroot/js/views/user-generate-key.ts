@@ -14,8 +14,9 @@ export class UserGenerateKeyForm extends FormComponent<UserGenerateKeyModel> {
     }
 
     public async initialize(options?: InitializeOptions) {
-        if (await userMustBeAuthenticated(this.userService, this.router) === InitializeResult.StopProcessing) {
-            return InitializeResult.StopProcessing;
+        const result = await userMustBeAuthenticated(this.userService, this.router);
+        if (result !== InitializeResult.Ok) {
+            return result;
         }
 
         return await super.initialize(options);

@@ -21,8 +21,9 @@ export class DocumentCreate extends FormComponent<EditableDocument> {
     }
 
     public async initialize(options?: InitializeOptions) {
-        if (await userMustBeAuthenticatedAndConfigured(this.userService, this.router) === InitializeResult.StopProcessing) {
-            return InitializeResult.StopProcessing;
+        const result = await userMustBeAuthenticatedAndConfigured(this.userService, this.router);
+        if (result !== InitializeResult.Ok) {
+            return result;
         }
 
         return super.initialize(options);

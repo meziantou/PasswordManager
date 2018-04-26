@@ -52,8 +52,9 @@ export class DocumentList extends ViewComponent {
     }
 
     public async initialize() {
-        if (await userMustBeAuthenticatedAndConfigured(this.userService, this.router) === InitializeResult.StopProcessing) {
-            return InitializeResult.StopProcessing;
+        const result = await userMustBeAuthenticatedAndConfigured(this.userService, this.router);
+        if (result !== InitializeResult.Ok) {
+            return result;
         }
 
         const documents = await this.documentService.get();
