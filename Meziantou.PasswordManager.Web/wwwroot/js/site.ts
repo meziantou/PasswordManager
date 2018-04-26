@@ -1,7 +1,4 @@
-﻿// https://github.com/diafygi/webcrypto-examples#rsa-oaep
-// https://gist.github.com/chrisveness/43bcda93af9f646d083fad678071b90a
-
-import { Router, RouteData } from "./router";
+﻿import { Router, RouteData } from "./router";
 import { ViewSwitcher } from "./ui/view-switcher";
 import { HttpClient, UserService, DocumentService } from './models/services';
 
