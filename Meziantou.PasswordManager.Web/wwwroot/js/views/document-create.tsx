@@ -48,7 +48,13 @@ export class DocumentCreate extends FormComponent<EditableDocument> {
                     if (isString(f.value)) {
                         editableField.value = f.value;
                     } else {
-                        editableField.value = await getFieldValue(f, this.userService);
+                        try {
+                            editableField.value = await getFieldValue(f, this.userService);
+                        } catch (ex) {
+                            console.warn(ex);
+                            this.router.setUrl("/documents");
+                            return new EditableDocument(); // TODO remove mandatory return value
+                        }
                     }
 
                     result.fields.push(editableField);
