@@ -79,6 +79,6 @@ async function bootstrap() {
         });
     });
 
-    router.setDefaultRoute((data) => document.body.appendChild(document.createTextNode("default")));
+    router.setDefaultRoute((data) => router.setUrl("/documents"));
     router.start();
 }

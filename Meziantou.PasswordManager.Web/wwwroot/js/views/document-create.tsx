@@ -1,14 +1,15 @@
 ﻿import { UserService, DocumentService, getFieldValue } from "../models/services";
 import { Router, RouteData } from '../router';
-import { ViewComponent } from '../ui/view-component';
+import { ViewComponent, InitializeResult } from '../ui/view-component';
 import { appendChild } from '../ui/jsx';
 import * as jsx from '../ui/jsx';
 import * as crypto from '../crypto';
 import { editable, getPropertyMetadata, PropertyDataAnnotations, DataType } from '../data-annotations';
-import { FormComponent, ArrayEditor, openModalForm, IEditor } from '../ui/form-component';
+import { FormComponent, ArrayEditor, openModalForm, IEditor, InitializeOptions } from '../ui/form-component';
 import { parseInteger, nameof, isString } from '../utilities';
 import { usingMasterKey } from './master-key';
 import { FieldType, Field, PublicKey } from '../models/model';
+import { userMustBeAuthenticatedAndConfigured } from './utilities';
 
 export class DocumentCreate extends FormComponent<EditableDocument> {
     constructor(
@@ -17,6 +18,14 @@ export class DocumentCreate extends FormComponent<EditableDocument> {
         private router: Router,
         private routeData: RouteData) {
         super();
+    }
+
+    public async initialize(options?: InitializeOptions) {
+        if (await userMustBeAuthenticatedAndConfigured(this.userService, this.router) === InitializeResult.StopProcessing) {
+            return InitializeResult.StopProcessing;
+        }
+
+        return super.initialize(options);
     }
 
     protected async loadDataCore(): Promise<EditableDocument> {

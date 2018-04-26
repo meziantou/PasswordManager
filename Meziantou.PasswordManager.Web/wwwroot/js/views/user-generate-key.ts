@@ -6,6 +6,7 @@ import { IValidationRule, validationRule, CompareOtherPropertyValidationRule } f
 import { isNumber } from '../utilities';
 import { UserService } from '../models/services';
 import { InitializeResult } from '../ui/view-component';
+import { userMustBeAuthenticated } from './utilities';
 
 export class UserGenerateKeyForm extends FormComponent<UserGenerateKeyModel> {
     constructor(private router: Router, private userService: UserService) {
@@ -13,8 +14,7 @@ export class UserGenerateKeyForm extends FormComponent<UserGenerateKeyModel> {
     }
 
     public async initialize(options?: InitializeOptions) {
-        if (!this.userService.isAuthenticated()) {
-            this.router.setUrl("/login");
+        if (await userMustBeAuthenticated(this.userService, this.router) === InitializeResult.StopProcessing) {
             return InitializeResult.StopProcessing;
         }
 

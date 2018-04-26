@@ -7,6 +7,7 @@ import { parseInteger, isNumber, isString } from '../utilities';
 import { usingMasterKey } from './master-key';
 import * as crypto from '../crypto';
 import { Document, Field, FieldType } from '../models/model';
+import { userMustBeAuthenticatedAndConfigured } from './utilities';
 
 class DocumentView {
     public fields: FieldView[];
@@ -51,14 +52,7 @@ export class DocumentList extends ViewComponent {
     }
 
     public async initialize() {
-        const user = await this.userService.me();
-        if (!user) {
-            this.router.setUrl("/login");
-            return InitializeResult.StopProcessing;
-        }
-
-        if (!user.publicKey) {
-            this.router.setUrl("/user/generate-key");
+        if (await userMustBeAuthenticatedAndConfigured(this.userService, this.router) === InitializeResult.StopProcessing) {
             return InitializeResult.StopProcessing;
         }
 
