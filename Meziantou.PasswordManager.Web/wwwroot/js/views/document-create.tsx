@@ -10,6 +10,7 @@ import { parseInteger, nameof, isString } from '../utilities';
 import { usingMasterKey } from './master-key';
 import { FieldType, Field, PublicKey } from '../models/model';
 import { userMustBeAuthenticatedAndConfigured } from './utilities';
+import { generatePassword } from '../password-generator';
 
 export class DocumentCreate extends FormComponent<EditableDocument> {
     constructor(
@@ -163,11 +164,12 @@ class NewField {
 }
 
 class FieldValueEditor implements IEditor {
-    constructor(private parentNode: Node,
+    constructor(
+        private parentNode: Node,
         private field: EditableField) {
     }
 
-    render(): void | Promise<void> {
+    public render(): void | Promise<void> {
         appendChild(this.parentNode,
             <div>
                 <label>{this.field.name}</label>
@@ -175,7 +177,12 @@ class FieldValueEditor implements IEditor {
             </div>);
     }
 
-    private createEditor(): Node {
+    public validate(): boolean {
+        return true;
+    }
+
+    private createEditor(): DocumentFragment {
+        const result = document.createDocumentFragment();
         let input: HTMLTextAreaElement | HTMLInputElement;
         if ([FieldType.Note, FieldType.EncryptedNote].includes(this.field.type)) {
             input = document.createElement("textarea");
@@ -195,23 +202,37 @@ class FieldValueEditor implements IEditor {
             input.value = this.field.value;
         }
 
-        input.addEventListener("change", e => {
+        const eventNames: (keyof HTMLElementEventMap)[] = ["change", "blur", "input"];
+        eventNames.forEach(eventName => input.addEventListener(eventName, e => {
             this.field.value = input.value;
-        });
+        }));
 
-        input.addEventListener("blur", e => {
-            this.field.value = input.value;
-        });
+        result.appendChild(input);
 
-        input.addEventListener("input", e => {
-            this.field.value = input.value;
-        });
+        if (this.field.type === FieldType.Password) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = "Generate";
+            button.addEventListener("click", e => {
+                e.preventDefault();
+                // TODO open window with options
+                const password = generatePassword({
+                    length: 16,
+                    numbers: true,
+                    lowerLetters: true,
+                    upperLetters: true,
+                    lowerAccents: true,
+                    upperAccents: true,
+                    specialCharacters: true,
+                    unicode: true,
+                });
 
-        return input;
-    }
+                input.value = password;
+            })
+            result.appendChild(button);
+        }
 
-    validate(): boolean {
-        return true;
+        return result;
     }
 }
 

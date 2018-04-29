@@ -5,6 +5,9 @@
         style?: string;
 
         onclick?: HTMLElement["onclick"];
+        onchange?: HTMLElement["onchange"];
+        onblur?: HTMLElement["onblur"];
+        oninput?: HTMLElement["oninput"];
     }
 
     export interface InstrinsicHTMLAnchorElement extends InstrinsicHTMLElement {
