@@ -11,6 +11,7 @@ import { usingMasterKey } from './master-key';
 import { FieldType, Field, PublicKey } from '../models/model';
 import { userMustBeAuthenticatedAndConfigured } from './utilities';
 import { generatePassword } from '../password-generator';
+import { openPasswordGenerator } from './password-generator';
 
 export class DocumentCreate extends FormComponent<EditableDocument> {
     constructor(
@@ -213,21 +214,13 @@ class FieldValueEditor implements IEditor {
             const button = document.createElement("button");
             button.type = "button";
             button.textContent = "Generate";
-            button.addEventListener("click", e => {
+            button.addEventListener("click", async e => {
                 e.preventDefault();
-                // TODO open window with options
-                const password = generatePassword({
-                    length: 16,
-                    numbers: true,
-                    lowerLetters: true,
-                    upperLetters: true,
-                    lowerAccents: true,
-                    upperAccents: true,
-                    specialCharacters: true,
-                    unicode: true,
-                });
 
-                input.value = password;
+                const password = await openPasswordGenerator();
+                if (password) {
+                    input.value = password;
+                }
             })
             result.appendChild(button);
         }

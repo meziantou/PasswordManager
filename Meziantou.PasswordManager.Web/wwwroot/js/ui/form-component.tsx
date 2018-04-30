@@ -3,7 +3,7 @@ import { DataType, PropertyDataAnnotations, getObjectAnnotationsFromInstance, ge
 import { isNullOrUndefined, isString, parseNumber, parseString, isUndefined, isArray, isObject, isBoolean } from "../utilities";
 import { validateProperty, validate } from "../validation";
 import * as jsx from "./jsx";
-import { removeChildren } from "../dom-utilities";
+import { removeChildren } from "./dom-utilities";
 import { appendChild } from "./jsx";
 
 export async function openModalForm<T>(form: FormComponent<T> | T): Promise<T | null> {

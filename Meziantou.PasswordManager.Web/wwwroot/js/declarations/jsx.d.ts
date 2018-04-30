@@ -23,8 +23,13 @@
         start?: string;
     }
 
+    export interface InstrinsicHTMLDetailsElement extends InstrinsicHTMLElement {
+        open?: boolean;
+    }
+
     export interface InstrinsicHTMLFormElement extends InstrinsicHTMLElement {
         method?: "dialog" | "GET" | "POST";
+        onsubmit?: HTMLElement["onsubmit"];
     }
 
     export interface InstrinsicHTMLButtonElement extends InstrinsicHTMLElement {
@@ -32,14 +37,19 @@
     }
 
     export interface InstrinsicHTMLInputElement extends InstrinsicHTMLElement {
-        type?: "text" | "password";
+        min?: string;
+        max?: string;
+        name?: string;
         readonly?: true;
+        step?: string;
+        type?: "checkbox" | "number" | "text" | "password";
         value?: string;
     }
 
     export interface IntrinsicElements {
         a: InstrinsicHTMLAnchorElement;
         button: InstrinsicHTMLButtonElement;
+        details: InstrinsicHTMLDetailsElement;
         dialog: InstrinsicHTMLElement;
         div: InstrinsicHTMLElement;
         form: InstrinsicHTMLFormElement;
@@ -55,6 +65,7 @@
         ol: InstrinsicHTMLOListElement;
         section: InstrinsicHTMLElement;
         span: InstrinsicHTMLElement;
+        summary: InstrinsicHTMLElement;
         ul: InstrinsicHTMLElement;
     }
 

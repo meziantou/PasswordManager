@@ -1,4 +1,4 @@
-﻿import { removeChildren } from "../dom-utilities";
+﻿import { removeChildren } from "./dom-utilities";
 import { ViewComponent, InitializeResult, RedirectResult } from "./view-component";
 import { isNumber } from '../utilities';
 import { Router } from '../router';

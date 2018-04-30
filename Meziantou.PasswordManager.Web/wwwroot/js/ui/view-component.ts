@@ -1,4 +1,4 @@
-﻿import { removeChildren } from "../dom-utilities";
+﻿import { removeChildren } from "./dom-utilities";
 
 export abstract class ViewComponent {
     protected parentNode: Node | null = null;

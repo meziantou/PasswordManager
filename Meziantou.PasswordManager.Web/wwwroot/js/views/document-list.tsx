@@ -8,6 +8,7 @@ import { usingMasterKey } from './master-key';
 import * as crypto from '../crypto';
 import { Document, Field, FieldType } from '../models/model';
 import { userMustBeAuthenticatedAndConfigured } from './utilities';
+import * as clipboard from '../clipboard';
 
 class DocumentView {
     public fields: FieldView[];
@@ -133,12 +134,8 @@ export class DocumentList extends ViewComponent {
             e.preventDefault();
 
             const value = await getFieldValue(field.field, this.userService);
-
-            // https://developers.google.com/web/updates/2018/03/clipboardapi
-            (navigator as any).clipboard.writeText(value)
-                .catch(err => {
-                    console.error('Could not copy text', err);
-                });
+            clipboard.set(value)
+                .catch(() => console.error("Cannot set value to clipboard"));
         };
 
         return handler.bind(this);
