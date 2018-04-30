@@ -17,6 +17,7 @@
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
+    "inlineSources": true,
     "strict": true,
     "target": "esnext",
     "reactNamespace": "jsx",

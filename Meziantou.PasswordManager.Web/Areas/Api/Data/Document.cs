@@ -11,6 +11,7 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Data
         [Key]
         public IntId Id { get; set; }
         public string DisplayName { get; internal set; }
+        public string Tags { get; internal set; }
 
         public DateTime CreatedOn { get; set; }
         public DateTime LastUpdatedOn { get; set; }

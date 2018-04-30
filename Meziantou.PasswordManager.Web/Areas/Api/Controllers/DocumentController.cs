@@ -60,6 +60,7 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Controllers
                 Id = existingDocument?.Id ?? default,
                 User = existingDocument?.User ?? user,
                 DisplayName = document.DisplayName,
+                Tags = document.Tags,
                 Fields = new List<Field>()
             };
 
@@ -119,6 +120,7 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Controllers
             {
                 Id = document.Id,
                 DisplayName = document.DisplayName,
+                Tags = document.Tags,
                 Fields = document.Fields?.Select(f => new ServiceModel.Field
                 {
                     Name = f.Name,

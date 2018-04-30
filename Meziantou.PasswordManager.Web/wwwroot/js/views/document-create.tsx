@@ -42,6 +42,7 @@ export class DocumentCreate extends FormComponent<EditableDocument> {
                 const result = new EditableDocument();
                 result.id = document.id;
                 result.displayName = document.displayName || "";
+                result.tags = document.tags || "";
                 result.fields = [];
                 result.sharedWith = (document.sharedWith || []).join(", ")
                 for (const f of document.fields) {
@@ -122,6 +123,7 @@ export class DocumentCreate extends FormComponent<EditableDocument> {
         await this.documentService.save({
             id: model.id,
             displayName: model.displayName,
+            tags: model.tags,
             fields: fields,
             sharedWith: model.sharedWith.split(/[\s,;]+/)
         });
@@ -140,6 +142,9 @@ class EditableDocument {
 
     @editable
     public displayName: string = "";
+
+    @editable
+    public tags: string = "";
 
     @editable
     public fields: EditableField[] = [];

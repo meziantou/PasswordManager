@@ -3,7 +3,7 @@ import { Router } from '../router';
 import { ViewComponent, InitializeResult } from '../ui/view-component';
 import { appendChild } from '../ui/jsx';
 import * as jsx from '../ui/jsx';
-import { parseInteger, isNumber, isString } from '../utilities';
+import { parseInteger, isNumber, isString, isArray, isNullOrEmpty } from '../utilities';
 import { usingMasterKey } from './master-key';
 import * as crypto from '../crypto';
 import { Document, Field, FieldType } from '../models/model';
@@ -23,6 +23,14 @@ class DocumentView {
 
     public get displayName() {
         return this.document.displayName;
+    }
+
+    public get tags() {
+        if (isString(this.document.tags)) {
+            return this.document.tags.split(",").map(s => s.trim()).filter(s => !isNullOrEmpty(s));
+        }
+
+        return [];
     }
 }
 
@@ -64,15 +72,51 @@ export class DocumentList extends ViewComponent {
     }
 
     protected renderCore(parentNode: Node): Promise<void> {
+        const tags = new Map<string, DocumentView[]>();
+        this.documents.forEach(d => {
+            for (const tag of d.tags) {
+                const t = tags.get(tag);
+                if (t) {
+                    t.push(d);
+                } else {
+                    tags.set(tag, [d]);
+                }
+            }
+        })
+
+        const list = document.createElement("ul");
+        parentNode.appendChild(list);
+
+        for (const tag of Array.from(tags.keys()).sort()) {
+            appendChild(list,
+                <details>
+                    <summary>{tag}</summary>
+                    <ul>
+                        {tags.get(tag)!.map(doc =>
+                            <li>
+                                {this.renderDocument(doc)}
+                            </li>)}
+                    </ul>
+                </details>);
+        }
+
         appendChild(parentNode,
             <ul>
-                {this.documents.map(doc =>
+                {this.documents.filter(doc => doc.tags.length === 0).map(doc =>
                     <li>
-                        <span data-id={doc.id} onclick={this.showDetails.bind(this)}>{doc.displayName}</span>
-                        <a href={`#/documents/edit/${doc.id}`}>(edit)</a>
+                        {this.renderDocument(doc)}
                     </li>)}
             </ul>);
         return Promise.resolve();
+    }
+
+    private renderDocument(doc: DocumentView) {
+        return (
+            <div>
+                <span data-id={doc.id} onclick={this.showDetails.bind(this)}>{doc.displayName}</span>
+                <a href={`#/documents/edit/${doc.id}`}>(edit)</a>
+            </div>
+        );
     }
 
     private showDetails(e: MouseEvent) {

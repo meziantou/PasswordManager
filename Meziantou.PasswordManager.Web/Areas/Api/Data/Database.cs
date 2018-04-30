@@ -22,8 +22,8 @@ namespace Meziantou.PasswordManager.Web.Areas.Api.Data
         protected virtual JsonSerializerSettings CreateSettings()
         {
             var settings = new JsonSerializerSettings();
-            settings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
-            settings.DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate;
+            //settings.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+            settings.DefaultValueHandling = DefaultValueHandling.Include;
 #if DEBUG
             settings.Formatting = Formatting.Indented;
 #endif
