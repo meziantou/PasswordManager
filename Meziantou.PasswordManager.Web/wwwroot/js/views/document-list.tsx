@@ -190,7 +190,6 @@ export class DocumentList extends ViewComponent {
         return (
             <div>
                 <span data-id={doc.id} onclick={this.showDetails.bind(this)}>{doc.displayName}</span>
-                <a href={`#/documents/edit/${doc.id}`}>(edit)</a>
             </div>
         );
     }
@@ -243,6 +242,10 @@ export class DocumentList extends ViewComponent {
                         {field.isEncrypted && <button type="button" onclick={this.showValue(field)}>Show</button>}
                         <button type="button" onclick={this.copyToClipboard(field)}>Copy</button>
                     </div>)}
+
+                <small>
+                    <a href={`#/documents/edit/${doc.id}`}>(edit)</a>
+                </small>
             </div>);
 
         this.parentNode.appendChild(dialog);

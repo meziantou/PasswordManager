@@ -65,6 +65,7 @@
         ol: InstrinsicHTMLOListElement;
         section: InstrinsicHTMLElement;
         span: InstrinsicHTMLElement;
+        small: InstrinsicHTMLElement;
         summary: InstrinsicHTMLElement;
         ul: InstrinsicHTMLElement;
     }
