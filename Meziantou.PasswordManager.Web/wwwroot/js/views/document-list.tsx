@@ -9,6 +9,7 @@ import * as crypto from '../crypto';
 import { Document, Field, FieldType } from '../models/model';
 import { userMustBeAuthenticatedAndConfigured } from './utilities';
 import * as clipboard from '../clipboard';
+import { removeChildren } from '../ui/dom-utilities';
 
 class DocumentView {
     public fields: FieldView[];
@@ -53,8 +54,10 @@ class FieldView {
     }
 }
 
+const untaggedGroupName = "";
 export class DocumentList extends ViewComponent {
     private documents: DocumentView[] = [];
+    private list: Node | null = null;
 
     constructor(private userService: UserService, private documentService: DocumentService, private router: Router) {
         super();
@@ -72,23 +75,94 @@ export class DocumentList extends ViewComponent {
     }
 
     protected renderCore(parentNode: Node): Promise<void> {
+        appendChild(parentNode,
+            <form onsubmit={this.onSearch.bind(this)}>
+                <input type="search" name="query" />
+                <button type="submit">Search</button>
+            </form>);
+
+        this.list = document.createElement("ul");
+        parentNode.appendChild(this.list);
+
+        const tags = this.getDocuments("");
+        this.renderDocuments(this.list, tags);
+        return Promise.resolve();
+    }
+
+    private onSearch(e: Event) {
+        e.preventDefault();
+        if (this.list && e.target instanceof HTMLFormElement) {
+            const data = new FormData(e.target);
+            const query = data.get("query");
+            if (isString(query) && query.trim() !== "") {
+                const documents = this.getDocuments(query);
+                this.renderDocuments(this.list, documents);
+            }
+        }
+    }
+
+    private getDocuments(query: string) {
         const tags = new Map<string, DocumentView[]>();
         this.documents.forEach(d => {
-            for (const tag of d.tags) {
-                const t = tags.get(tag);
+            if (query && !filter(d)) {
+                return;
+            }
+
+            if (d.tags.length > 0) {
+                for (const tag of d.tags) {
+                    const t = tags.get(tag);
+                    if (t) {
+                        t.push(d);
+                    } else {
+                        tags.set(tag, [d]);
+                    }
+                }
+            } else {
+                const t = tags.get(untaggedGroupName);
                 if (t) {
                     t.push(d);
                 } else {
-                    tags.set(tag, [d]);
+                    tags.set(untaggedGroupName, [d]);
                 }
             }
-        })
+        });
 
-        const list = document.createElement("ul");
-        parentNode.appendChild(list);
+        return tags;
+
+        function filter(document: DocumentView) {
+            const pattern = new RegExp(escapeRegex(query), "i");
+            if (document.displayName && pattern.test(document.displayName)) {
+                return true;
+            }
+
+            return document.fields.filter(f => !f.isEncrypted).some(f => pattern.test(f.displayValue));
+        }
+
+        function escapeRegex(pattern: string) {
+            const specials = [
+                // order matters for these
+                "-", "[", "]"
+                // order doesn't matter for any of these
+                , "/", "{", "}", "(", ")", "*", "+", "?", ".", "\\", "^", "$", "|"
+            ];
+
+            // I choose to escape every character with '\'
+            // even though only some strictly require it when inside of []
+            const regex = RegExp('[' + specials.join('\\') + ']', 'g');
+
+            return pattern.replace(regex, "\\$&");
+        }
+    }
+
+    private renderDocuments(parentNode: Node, tags: Map<string, DocumentView[]>) {
+        removeChildren(parentNode);
 
         for (const tag of Array.from(tags.keys()).sort()) {
-            appendChild(list,
+            if (tag === untaggedGroupName) {
+                continue;
+            }
+
+            appendChild(parentNode,
                 <details>
                     <summary>{tag}</summary>
                     <ul>
@@ -100,14 +174,16 @@ export class DocumentList extends ViewComponent {
                 </details>);
         }
 
-        appendChild(parentNode,
-            <ul>
-                {this.documents.filter(doc => doc.tags.length === 0).map(doc =>
-                    <li>
-                        {this.renderDocument(doc)}
-                    </li>)}
-            </ul>);
-        return Promise.resolve();
+        const untagged = tags.get(untaggedGroupName);
+        if (untagged) {
+            appendChild(parentNode,
+                <ul>
+                    {untagged.map(doc =>
+                        <li>
+                            {this.renderDocument(doc)}
+                        </li>)}
+                </ul>);
+        }
     }
 
     private renderDocument(doc: DocumentView) {

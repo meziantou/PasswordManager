@@ -42,7 +42,7 @@
         name?: string;
         readonly?: true;
         step?: string;
-        type?: "checkbox" | "number" | "text" | "password";
+        type?: "checkbox" | "number" | "text" | "password" | "search";
         value?: string;
     }
 
