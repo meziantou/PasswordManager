@@ -23,7 +23,16 @@ class DocumentView {
     }
 
     public get displayName() {
-        return this.document.displayName;
+        if (this.document.displayName) {
+            return this.document.displayName;
+        }
+
+        const url = this.document.fields.find(f => f.type === FieldType.Url && isString(f.value));
+        if (url) {
+            return url.value!;
+        }
+
+        return "<No display name>";
     }
 
     public get tags() {
@@ -218,7 +227,7 @@ export class DocumentList extends ViewComponent {
         }
 
         const dialog = document.createElement("dialog");
-        dialog.addEventListener("close", e => {
+        dialog.addEventListener("close", _ => {
             dialog.remove();
         }, { once: true });
 

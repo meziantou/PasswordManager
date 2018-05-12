@@ -48,6 +48,7 @@ export interface Field {
 export const enum FieldType {
     Text,
     Note,
+    Username,
     Password,
     Url,
     EmailAddress,
