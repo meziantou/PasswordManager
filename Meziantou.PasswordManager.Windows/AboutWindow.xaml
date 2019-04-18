@@ -1,0 +1,36 @@
+﻿<Window x:Class="Meziantou.PasswordManager.Windows.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Meziantou.PasswordManager.Windows"
+        xmlns:utilities="clr-namespace:Meziantou.PasswordManager.Windows.Utilities"
+        mc:Ignorable="d"
+        Title="About" Height="300" Width="300"
+        Icon="Meziantou.PasswordManager.ico"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight"
+        utilities:WindowUtilities.EscapeClosesWindow="True">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Image Grid.Column="0" Grid.Row="0" Source="Meziantou.PasswordManager.ico" Width="32" VerticalAlignment="Top" Margin="20" />
+
+        <StackPanel Grid.Column="1" Grid.Row="0" Margin="0 20 20 0">
+            <TextBlock FontWeight="Bold">Password Manager</TextBlock>
+            <TextBlock x:Name="TextBlockDetails" />
+        </StackPanel>
+
+        <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" 
+                IsDefault="True" Width="100" Click="ButtonBase_OnClick" Margin="10">OK</Button>
+    </Grid>
+</Window>

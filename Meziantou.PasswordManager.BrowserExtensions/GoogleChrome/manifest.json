@@ -1,0 +1,23 @@
+{
+    "author": "Meziantou",
+    "background": {
+        "page": "background.html",
+        "persistent": true
+    },
+    "browser_action": {
+        "default_title": "Fill form using Meziantou PasswordManager",
+        "default_icon": {
+            "16": "images/icon16.png",
+            "24": "images/icon24.png",
+            "32": "images/icon32.png"
+        }
+    },
+    "description": "Fill the forms on the page using the username/password in Meziantou PasswordManager",
+    "manifest_version": 2,
+    "name": "Meziantou PasswordManager",
+    "permissions": [
+        "activeTab",
+        "contextMenus"
+    ],
+    "version": "1.0.2"
+}

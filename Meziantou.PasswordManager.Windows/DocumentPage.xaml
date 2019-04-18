@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="Meziantou.PasswordManager.Windows.DocumentPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:client="clr-namespace:Meziantou.PasswordManager.Client;assembly=Meziantou.PasswordManager.Client"
+      xmlns:wpfFontAwesome="clr-namespace:Meziantou.WpfFontAwesome;assembly=Meziantou.WpfFontAwesome"
+      xmlns:utilities="clr-namespace:Meziantou.PasswordManager.Windows.Utilities"
+      xmlns:windows="clr-namespace:Meziantou.PasswordManager.Windows"
+      xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      d:DataContext="{d:DesignInstance d:Type=client:Document}">
+    <UserControl.Resources>
+        <CollectionViewSource x:Key="FieldCollectionViewSource" Source="{Binding Fields}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="SortOrder" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <utilities:FieldIconConverter x:Key="FieldIconConverter" />
+    </UserControl.Resources>
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ItemsControl ItemsSource="{Binding Source={StaticResource FieldCollectionViewSource}}" Focusable="False">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="client:Field">
+                    <DataTemplate.Resources>
+                        <utilities:UrlToVisibilityConverter x:Key="UrlToVisibilityConverter" />
+                    </DataTemplate.Resources>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                            <TextBlock Text="{Binding Converter={StaticResource FieldIconConverter}}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                            <windows:AutoRefreshTextBlock Visibility="{Binding IsEncrypted, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock.Text>
+                                    <Binding Path="LastUpdatedOnRelative" StringFormat=" (Last updated {0})" />
+                                </TextBlock.Text>
+                            </windows:AutoRefreshTextBlock>
+                        </StackPanel>
+
+                        <Grid Grid.Row="1" Style="{StaticResource VerticalFormInputGroup}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button Grid.Column="0" DataContext="{Binding}" Click="CopyToClipboardButton_OnClick">
+                                <TextBlock Text="{wpfFontAwesome:Icon Copy}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                            </Button>
+                            <Button Grid.Column="1" DataContext="{Binding}" Click="OpenWebsiteButton_OnClick" Visibility="{Binding DisplayValue, Converter={StaticResource UrlToVisibilityConverter}}">
+                                <TextBlock Text="{wpfFontAwesome:Icon ExternalLink}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                            </Button>
+                            <TextBox Grid.Column="2" Text="{Binding DisplayValue}" IsReadOnly="True" Style="{StaticResource TextBox}" />
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Vertical" Grid.Row="1" VerticalAlignment="Bottom">
+            <TextBlock Visibility="{Binding IsSharedBySomeone, Converter={StaticResource BooleanToVisibilityConverter}}" TextWrapping="Wrap"
+                       Text="{Binding SharedBy, StringFormat=Shared by: {0}}" />
+
+            <TextBlock Visibility="{Binding IsSharedWithSomeone, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Bottom" TextWrapping="Wrap"
+                       Text="{Binding SharedWithString, StringFormat=Shared with: {0}}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,150 @@
+﻿<UserControl x:Class="Meziantou.PasswordManager.Windows.EditDocumentPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Meziantou.PasswordManager.Windows"
+             xmlns:viewModel="clr-namespace:Meziantou.PasswordManager.Windows.ViewModel"
+             xmlns:fa="clr-namespace:Meziantou.WpfFontAwesome;assembly=Meziantou.WpfFontAwesome"
+             xmlns:utilities="clr-namespace:Meziantou.PasswordManager.Windows.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance Type=viewModel:EditableDocument}">
+    <UserControl.Resources>
+        <utilities:FieldIconConverter x:Key="FieldIconConverter" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Display Name" />
+        <TextBox Grid.Row="1" x:Name="TxtDisplayName" Text="{Binding DisplayName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource VerticalFormInputTextBox}" />
+
+        <TextBlock Grid.Row="2" Text="Tags (comma separated)" />
+        <TextBox Grid.Row="3" Text="{Binding Tags, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource VerticalFormInputTextBox}" />
+
+        <ItemsControl Grid.Row="4" ItemsSource="{Binding Fields}" Focusable="False" Visibility="{Binding CanEditFields, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ItemsControl.Resources>
+                <DataTemplate x:Key="TextFieldTemplate" DataType="viewModel:EditableField">
+                    <TextBox Text="{Binding ValueString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource VerticalFormInputTextBox}" />
+                </DataTemplate>
+                <DataTemplate x:Key="MultiLineTextFieldTemplate" DataType="viewModel:EditableField">
+                    <TextBox Text="{Binding ValueString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource VerticalFormInputTextBoxMultiLines}" />
+                </DataTemplate>
+                <DataTemplate x:Key="PasswordFieldTemplate" DataType="viewModel:EditableField">
+                    <Grid Style="{StaticResource VerticalFormInputGroup}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <PasswordBox x:Name="TxtPassword" Style="{StaticResource PasswordBox}" Margin="0"
+                                     utilities:PasswordBoxUtilities.Attach="True"
+                                     utilities:PasswordBoxUtilities.Password="{Binding ValueString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <Button Grid.Column="1" Click="ButtonGeneratePassword_OnClick">
+                            <TextBlock Text="{fa:Icon Refresh}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+                <DataTemplate x:Key="EmailAddressFieldTemplate" DataType="viewModel:EditableField">
+                    <ComboBox Text="{Binding ValueString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Style="{StaticResource VerticalFormInputComboBox}" Loaded="EmailAddressComboBox_OnLoaded" />
+                </DataTemplate>
+                <DataTemplate x:Key="UsernameFieldTemplate" DataType="viewModel:EditableField">
+                    <ComboBox Text="{Binding ValueString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEditable="True" Style="{StaticResource VerticalFormInputComboBox}" Loaded="LoginComboBox_OnLoaded" />
+                </DataTemplate>
+                <local:FieldEditorTemplateSelector x:Key="FieldEditorTemplateSelector"
+                                                   TextTemplate="{StaticResource TextFieldTemplate}"
+                                                   EmailAddressTemplate="{StaticResource EmailAddressFieldTemplate}"
+                                                   UsernameTemplate="{StaticResource UsernameFieldTemplate}"
+                                                   PasswordTemplate="{StaticResource PasswordFieldTemplate}"
+                                                   UrlTemplate="{StaticResource TextFieldTemplate}"
+                                                   MultiLineStringTemplate="{StaticResource MultiLineTextFieldTemplate}"/>
+            </ItemsControl.Resources>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="viewModel:EditableField">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="{Binding Converter={StaticResource FieldIconConverter}}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                            <TextBlock Grid.Column="1" Text="{Binding Name}" />
+
+                            <StackPanel Orientation="Horizontal" Grid.Column="2">
+                                <ToggleButton IsChecked="{Binding IsSelectorVisible}" IsThreeState="False">
+                                    <TextBlock Text="{fa:Icon Bullseye}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                                </ToggleButton>
+
+                                <Button DataContext="{Binding}" Click="RemoveFieldButton_Click">
+                                    <TextBlock Text="{fa:Icon Times}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                                </Button>
+
+                                <Button DataContext="{Binding}" Click="MoveFieldDownButton_Click">
+                                    <TextBlock Text="{fa:Icon ArrowDown}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                                </Button>
+
+                                <Button DataContext="{Binding}" Click="MoveFieldUpButton_Click">
+                                    <TextBlock Text="{fa:Icon ArrowUp}" Style="{StaticResource FontAwesome}" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5" />
+                                </Button>
+                            </StackPanel>
+
+                        </Grid>
+
+                        <ContentControl Grid.Row="1" 
+                                        Content="{Binding}"
+                                        ContentTemplateSelector="{StaticResource FieldEditorTemplateSelector}" 
+                                        KeyboardNavigation.IsTabStop="False" />
+
+                        <Grid Grid.Row="2" Visibility="{Binding IsSelectorVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Selector:" VerticalAlignment="Center" />
+                            <TextBox Grid.Column="1" Text="{Binding Selector, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource VerticalFormInputTextBox}" />
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Button Grid.Row="5" HorizontalAlignment="Left" Click="ButtonAddField_OnClick" Visibility="{Binding CanEditFields, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock >
+                <Run Text="{fa:Icon Plus}" Style="{StaticResource FontAwesome}"/>
+                <Run Text="Add a field" />
+            </TextBlock>
+
+            <Button.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="_Text" Click="ButtonAddFieldType_OnClick" Tag="{x:Static local:CreateFieldType.String}" />
+                    <MenuItem Header="_Notes" Click="ButtonAddFieldType_OnClick" Tag="{x:Static local:CreateFieldType.MultiLineString}" />
+                    <MenuItem Header="_Url"  Click="ButtonAddFieldType_OnClick" Tag="{x:Static local:CreateFieldType.Url}"/>
+                    <MenuItem Header="_Email Address" Click="ButtonAddFieldType_OnClick" Tag="{x:Static local:CreateFieldType.EmailAddress}"/>
+                    <MenuItem Header="_Login" Click="ButtonAddFieldType_OnClick" Tag="{x:Static local:CreateFieldType.Username}"/>
+                    <MenuItem Header="_Password" Click="ButtonAddFieldType_OnClick" Tag="{x:Static local:CreateFieldType.Password}" />
+                    <MenuItem Header="_Encrypted notes" Click="ButtonAddFieldType_OnClick" Tag="{x:Static local:CreateFieldType.EncryptedMultiLineString}" />
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
+
+        <Button Grid.Row="6" x:Name="ButtonSave" Content="Save" VerticalAlignment="Bottom" IsDefault="True" Click="ButtonSave_OnClick" />
+    </Grid>
+</UserControl>

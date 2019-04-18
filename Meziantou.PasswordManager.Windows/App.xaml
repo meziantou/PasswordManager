@@ -1,0 +1,85 @@
+﻿<Application x:Class="Meziantou.PasswordManager.Windows.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:windows="clr-namespace:Meziantou.PasswordManager.Windows"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Meziantou.WpfFontAwesome;component/FontAwesome.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+            <Style TargetType="MenuItem">
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+            
+            <Style TargetType="Button">
+                <Setter Property="FontSize" Value="14"/>
+            </Style>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Margin" Value="0 0 0 3"/>
+            </Style>
+
+            <Style TargetType="windows:AutoRefreshTextBlock" BasedOn="{StaticResource {x:Type TextBlock}}" />
+
+            <Style TargetType="TextBlock" x:Key="EmptyTextBlock">
+                <Style.Triggers>
+                    <Trigger Property="Text" Value="">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="TextBox" x:Key="TextBox">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="MinHeight" Value="31"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="PasswordBox" x:Key="PasswordBox">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="MinHeight" Value="31"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="ComboBox" x:Key="ComboBox">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="MinHeight" Value="31"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+            </Style>
+
+            <Style TargetType="TextBox" x:Key="VerticalFormInputTextBox" BasedOn="{StaticResource TextBox}">
+                <Setter Property="Margin" Value="0 0 0 5"/>
+            </Style>
+
+            <Style TargetType="TextBox" x:Key="VerticalFormInputTextBoxMultiLines" BasedOn="{StaticResource VerticalFormInputTextBox}">
+                <Setter Property="VerticalContentAlignment" Value="Top"/>
+                <Setter Property="AcceptsReturn" Value="True"/>
+                <Setter Property="MinLines" Value="3"/>
+            </Style>
+
+            <Style TargetType="ComboBox" x:Key="VerticalFormInputComboBox" BasedOn="{StaticResource ComboBox}">
+                <Setter Property="Margin" Value="0 0 0 5"/>
+            </Style>
+
+            <Style TargetType="PasswordBox" x:Key="VerticalFormInputPasswordBox" BasedOn="{StaticResource PasswordBox}">
+                <Setter Property="Margin" Value="0 0 0 5"/>
+            </Style>
+
+            <Style TargetType="CheckBox" x:Key="VerticalFormInputCheckBox">
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="0 0 0 5"/>
+            </Style>
+
+            <Style TargetType="FrameworkElement" x:Key="VerticalFormInputGroup">
+                <Setter Property="Margin" Value="0 0 0 5"/>
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,31 @@
+﻿<Window x:Class="Meziantou.PasswordManager.Windows.ShareDocumentWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModel="clr-namespace:Meziantou.PasswordManager.Windows.ViewModel"
+        xmlns:utilities="clr-namespace:Meziantou.PasswordManager.Windows.Utilities"
+        mc:Ignorable="d"
+        Title="Password Manager - Share" Height="162.482" Width="300"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        d:DataContext="{d:DesignInstance Type=viewModel:ShareDocumentViewModel}" 
+        WindowStartupLocation="CenterOwner" 
+        SizeToContent="Height"
+        utilities:WindowUtilities.EscapeClosesWindow="True" Icon="Meziantou.PasswordManager.ico">
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding ErrorText}" Foreground="Red" TextWrapping="Wrap" Style="{StaticResource EmptyTextBlock}" />
+        <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{Binding Document.FinalDisplayName, StringFormat=Share \'{0}\' with:}" />
+        <ComboBox Grid.Row="2" x:Name="CbxUsername" IsEditable="True" Style="{StaticResource VerticalFormInputComboBox}"
+                  Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding KnownUsernames}" />
+        <Button Grid.Row="3" IsDefault="True" IsEnabled="{Binding CanShare}" Click="ButtonBase_OnClick">Share</Button>
+    </Grid>
+</Window>
